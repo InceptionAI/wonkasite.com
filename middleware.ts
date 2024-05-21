@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { useSession } from "next-auth/react";
-
+import { getLocale } from "./lib/get-locale";
 export const config = {
   matcher: [
     /*
@@ -83,5 +81,14 @@ export default async function middleware(req: NextRequest) {
   }
 
   // rewrite everything else to `/[domain]/[slug] dynamic route
+
+  console.log("path", path);
+  if (path === "/") {
+    const pathLocale = await getLocale();
+    return NextResponse.rewrite(new URL(`/${pathLocale}`, req.url));
+  }
+  // e.g. incoming request is /products
+  // The new URL is now /en-US/products
+
   return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
 }

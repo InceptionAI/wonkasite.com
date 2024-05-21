@@ -7,12 +7,14 @@ const Page = async () => {
   const headersList = headers();
   const clientAddress = headersList.get('x-forwarded-for') || '192.0.2.1'; // Default IP if not found
   let countryCode = 'CA'; // Default to Canada
+  //let regionCode = 'Quebec'; // Example region
   let defaultLanguage = 'en'; // Default language
 
   if (process.env.NODE_ENV !== 'development') {
     const response = await fetch(`https://ipinfo.io/${clientAddress}/json?token=<YOUR_TOKEN>`);
     const data = await response.json();
     countryCode = data.country || countryCode;
+    //regionCode = data.region ?? '';
     // Verify that it exist in RegionCode
     if (!Object.values(RegionCode).includes(countryCode as RegionCode)) {
       countryCode = 'CA';
@@ -34,7 +36,7 @@ const parseAcceptLanguage = (header: string, country: string): string => {
       if (lang.length === 2) {
         return `${lang}-${country}`;
       } else if (lang.length === 5) {
-        return lang;
+        return lang
       } else {
         return null;
       }
